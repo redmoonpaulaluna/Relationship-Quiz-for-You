@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Relationship Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: url('https://assets.pokemon.com/assets/cms2/img/misc/virtual-backgrounds/masters/pokemon-masters-bg-30.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Press Start 2P', cursive;
+    color: #fff;
+    text-align: center;
+  }
+
+  #quiz-container {
+    background: rgba(0,0,0,0.75);
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 20px 40px 40px 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 15px #ffcb05;
+    position: relative;
+  }
+
+  h1 {
+    margin-bottom: 10px;
+    color: #ffcb05;
+    text-shadow: 2px 2px #3b4cca;
+  }
+
+  .question {
+    font-size: 1.1rem;
+    margin: 30px 0 20px 0;
+  }
+
+  .answers {
+    list-style: none;
+    padding: 0;
+  }
+
+  .answers li {
+    margin: 12px 0;
+  }
+
+  button.answer-btn {
+    background: #3b4cca;
+    border: 3px solid #ffcb05;
+    border-radius: 12px;
+    color: #ffcb05;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 12px 18px;
+    width: 100%;
+    transition: background 0.3s ease;
+  }
+
+  button.answer-btn:hover:not(:disabled) {
+    background: #ffcb05;
+    color: #3b4cca;
+  }
+
+  button.answer-btn:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  #feedback {
+    margin-top: 20px;
+    font-size: 1rem;
+    min-height: 80px;
+    line-height: 1.3;
+  }
+
+  #next-btn {
+    margin-top: 25px;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 15px;
+    border: none;
+    background: #ffcb05;
+    color: #3b4cca;
+    cursor: pointer;
+    box-shadow: 0 0 10px #ffcb05;
+    display: none;
+  }
+
+  #next-btn:hover {
+    background: #f5b800;
+  }
+
+  #result {
+    font-size: 1.2rem;
+    margin-top: 30px;
+    color: #ffcb05;
+  }
+
+  #pokemon-icons {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  #pokemon-icons img {
+    width: 40px;
+    height: 40px;
+  }
+
+  @media (max-width: 600px) {
+    #quiz-container {
+      margin: 20px 15px;
+      padding: 15px 20px 30px 20px;
+    }
+
+    .question {
+      font-size: 1rem;
+    }
+
+    button.answer-btn {
+      font-size: 0.85rem;
+      padding: 10px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="quiz-container">
+  <h1>Relationship Quiz</h1>
+  <div id="pokemon-icons">
+    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png" alt="Pikachu" title="Pikachu" />
+    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/150.png" alt="Mewtwo" title="Mewtwo" />
+    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png" alt="Bulbasaur" title="Bulbasaur" />
+  </div>
+  <div id="question-container">
+    <div class="question" id="question-text"></div>
+    <ul class="answers" id="answers-list"></ul>
+    <div id="feedback"></div>
+    <button id="next-btn">Next Question</button>
+  </div>
+  <div id="result"></div>
+</div>
+
+<script>
+  const quizData = [
+    {
+      question: "When did we meet?",
+      answers: [
+        { text: "30. Nov 2024", correct: false },
+        { text: "28. Nov 2024", correct: false },
+        { text: "29. Nov 2024", correct: true }
+      ],
+      feedbackCorrect: "Correct!",
+      feedbackWrong: "Wrong! The right answer is: 29. Nov 2024"
+    },
+    {
+      question: "Which movie did we watch on the night you first came over?",
+      answers: [
+        { text: "Shutter Island", correct: true },
+        { text: "Shadow Island", correct: false },
+        { text: "Shatter Island", correct: false }
+      ],
+      feedbackCorrect: "Correct!",
+      feedbackWrong: "Wrong! The right answer is: Shutter Island"
+    },
+    {
+      question: "What's my little brother's middle name?",
+      answers: [
+        { text: "Lorenz", correct: false },
+        { text: "Junior", correct: false },
+        { text: "None", correct: true }
+      ],
+      feedbackCorrect: "Correct!",
+      feedbackWrong: "Wrong! The right answer is: None"
+    },
+    {
+      question: "What's my favorite color?",
+      answers: [
+        { text: "Lavender", correct: false },
+        { text: "Olive green", correct: true },
+        { text: "Light blue", correct: false }
+      ],
+      feedbackCorrect: "Correct!",
+      feedbackWrong: "Wrong! The right answer is: Olive green"
+    },
+    {
+      question: "What's my dream travel destination?",
+      answers: [
+        { text: "Hawaii", correct: false },
+        { text: "Maldives", correct: false },
+        { text: "Greece", correct: true }
+      ],
+      feedbackCorrect: "Correct!",
+      feedbackWrong: "Wrong! The right answer is: Greece"
+    },
+    {
+      question: "What's my favorite food?",
+      answers: [
+        { text: "Chicken with white sauce", correct: true },
+        { text: "Homemade pizza", correct: false },
+        { text: "Cordon Bleu", correct: false }
+      ],
+      feedbackCorrect: "Correct!",
+      feedbackWrong: "Wrong! The right answer is: Chicken with white sauce"
+    },
+    {
+      question: "What do I dream about at night?",
+      answers: [
+        { text: "About you", correct: false, specialWrong: "Did you think you little rascal – just kidding!" },
+        { text: "About food", correct: false },
+        { text: "That my car breaks down :) - dont hate me honey...", correct: true }
+      ],
+      feedbackCorrect: "Correct!",
+      feedbackWrong: "Wrong! The right answer is: That my car breaks down"
+    },
+    {
+      question: "What do I like to eat the most?",
+      answers: [
+        { text: "Air and love", correct: false },
+        { text: "You", correct: true },
+        { text: "Nothing", correct: false, specialWrong: "Hey!" }
+      ],
+      feedbackCorrect: "Correct!",
+      feedbackWrong: "Wrong! The right answer is: You"
+    },
+    {
+      question: "How many days are we together when it's 365 days?",
+      answers: [
+        { text: "2 elephants", correct: true },
+        { text: "3 ravioli", correct: true },
+        { text: "7 feet", correct: true }
+      ],
+      feedbackCorrect: "Wow! You're good at math!",
+      feedbackWrong: ""
+    },
+    {
+      question: "What do I say the most?",
+      answers: [
+        { text: "Ohjemine", correct: false },
+        { text: "Joa", correct: true },
+        { text: "Hurensohn", correct: false }
+      ],
+      feedbackCorrect: "Correct!",
+      feedbackWrong: "Wrong! The right answer is: Joa"
+    }
+  ];
+
+  const questionText = document.getElementById('question-text');
+  const answersList = document.getElementById('answers-list');
+  const feedbackDiv = document.getElementById('feedback');
+  const nextBtn = document.getElementById('next-btn');
+  const resultDiv = document.getElementById('result');
+
+  let currentQuestion = 0;
+  let score = 0;
+
+  function loadQuestion() {
+    feedbackDiv.textContent = '';
+    nextBtn.style.display = 'none';
+    answersList.innerHTML = '';
+    resultDiv.textContent = '';
+
+    const q = quizData[currentQuestion];
+    questionText.textContent = q.question;
+
+    q.answers.forEach((answer) => {
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.textContent = answer.text;
+      btn.className = 'answer-btn';
+      btn.addEventListener('click', () => selectAnswer(answer));
+      li.appendChild(btn);
+      answersList.appendChild(li);
+    });
+  }
+
+  function selectAnswer(answer) {
+    const allButtons = document.querySelectorAll('.answer-btn');
+    allButtons.forEach(btn => btn.disabled = true);
+
+    const q = quizData[currentQuestion];
+
+    if(currentQuestion === 6 && !answer.correct && answer.specialWrong) {
+      feedbackDiv.innerHTML = `<span style="color:#ffcb05;">${answer.specialWrong}</span><br><br>${q.feedbackWrong}`;
+    } else if(currentQuestion === 7 && !answer.correct && answer.specialWrong) {
+      feedbackDiv.innerHTML = `<span style="color:#ffcb05;">${answer.specialWrong}</span><br><br>${q.feedbackWrong}`;
+    } else if(currentQuestion === 8) {
+      feedbackDiv.style.color = '#ffcb05';
+      feedbackDiv.textContent = q.feedbackCorrect;
+      score++;
+    } else {
+      if(answer.correct){
+        feedbackDiv.style.color = '#00ff00';
+        feedbackDiv.textContent = q.feedbackCorrect;
+        score++;
+      } else {
+        feedbackDiv.style.color = '#ff4c4c';
+        feedbackDiv.textContent = `${q.feedbackWrong}`;
+      }
+    }
+
+    nextBtn.style.display = 'inline-block';
+  }
+
+  nextBtn.addEventListener('click', () => {
+    currentQuestion++;
+    if(currentQuestion < quizData.length){
+      loadQuestion();
+    } else {
+      showResult();
+    }
+  });
+
+  function showResult() {
+    questionText.textContent = '';
+    answersList.innerHTML = '';
+    feedbackDiv.textContent = '';
+    nextBtn.style.display = 'none';
+    resultDiv.textContent = `You got ${score} / ${quizData.length} correct!`;
+  }
+
+  loadQuestion();
+</script>
+
+</body>
+</html>
